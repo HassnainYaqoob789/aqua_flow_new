@@ -1,30 +1,29 @@
 "use client";
 
-import React, { useState } from "react";
+import React, { useState, ChangeEvent, FormEvent } from "react";
 import { ArrowLeft, Mail, Phone, MapPin, User, DollarSign, Calendar, Globe, Save } from "lucide-react";
 import Breadcrumb from "@/components/Breadcrumbs/Breadcrumb";
 import DefaultLayout from "@/components/Layouts/DefaultLayout";
-// import { useMutation, useQueryClient } from "@tanstack/react-query";
-// import { createCustomer } from "@/api/postApi";
-// import { usePostStore } from "@/store/postStore";
 
+interface FormData {
+  firstName: string;
+  lastName: string;
+  email: string;
+  phone: string;
+  address: string;
+  city: string;
+  postalCode: string;
+  country: string;
+  companyName: string;
+  registrationDate: string;
+}
+
+interface Errors {
+  [key: string]: string;
+}
 
 export default function AddCustomer() {
-
-  // const { title, body, setTitle, setBody, resetForm } = usePostStore();
-  // const queryClient = useQueryClient();
-
-
-  // const { mutate, isPending, isSuccess, isError } = useMutation({
-  //   mutationFn: createPost,
-  //   onSuccess: (newPost) => {
-  //     console.log("✅ Post created:", newPost);
-  //     queryClient.invalidateQueries(["posts"]); // refresh post list
-  //     resetForm();
-  //   },
-  // });
-
-  const [formData, setFormData] = useState({
+  const [formData, setFormData] = useState<FormData>({
     firstName: "",
     lastName: "",
     email: "",
@@ -37,9 +36,9 @@ export default function AddCustomer() {
     registrationDate: "",
   });
 
-  const [errors, setErrors] = useState({});
+  const [errors, setErrors] = useState<Errors>({});
 
-  const handleChange = (e) => {
+  const handleChange = (e: ChangeEvent<HTMLInputElement>) => {
     const { name, value } = e.target;
     setFormData((prev) => ({ ...prev, [name]: value }));
     // Clear error on change
@@ -48,8 +47,8 @@ export default function AddCustomer() {
     }
   };
 
-  const validateForm = () => {
-    const newErrors = {};
+  const validateForm = (): boolean => {
+    const newErrors: Errors = {};
     if (!formData.firstName.trim()) newErrors.firstName = "First name is required";
     if (!formData.lastName.trim()) newErrors.lastName = "Last name is required";
     if (!formData.email.trim()) newErrors.email = "Email is required";
@@ -65,7 +64,7 @@ export default function AddCustomer() {
     return Object.keys(newErrors).length === 0;
   };
 
-  const handleSubmit = (e) => {
+  const handleSubmit = (e: FormEvent<HTMLFormElement>) => {
     e.preventDefault();
     if (validateForm()) {
       // Simulate API call or add to customers list
@@ -121,9 +120,8 @@ export default function AddCustomer() {
                 value={formData.firstName}
                 onChange={handleChange}
                 placeholder="Enter first name"
-                className={`w-full rounded-lg border ${
-                  errors.firstName ? "border-red-500" : "border-stroke"
-                } bg-transparent py-2 px-4 text-sm outline-none focus:border-primary dark:border-form-strokedark dark:bg-form-input dark:focus:border-primary`}
+                className={`w-full rounded-lg border ${errors.firstName ? "border-red-500" : "border-stroke"
+                  } bg-transparent py-2 px-4 text-sm outline-none focus:border-primary dark:border-form-strokedark dark:bg-form-input dark:focus:border-primary`}
               />
               {errors.firstName && (
                 <p className="mt-1 text-xs text-red-500">{errors.firstName}</p>
@@ -141,9 +139,8 @@ export default function AddCustomer() {
                 value={formData.lastName}
                 onChange={handleChange}
                 placeholder="Enter last name"
-                className={`w-full rounded-lg border ${
-                  errors.lastName ? "border-red-500" : "border-stroke"
-                } bg-transparent py-2 px-4 text-sm outline-none focus:border-primary dark:border-form-strokedark dark:bg-form-input dark:focus:border-primary`}
+                className={`w-full rounded-lg border ${errors.lastName ? "border-red-500" : "border-stroke"
+                  } bg-transparent py-2 px-4 text-sm outline-none focus:border-primary dark:border-form-strokedark dark:bg-form-input dark:focus:border-primary`}
               />
               {errors.lastName && (
                 <p className="mt-1 text-xs text-red-500">{errors.lastName}</p>
@@ -164,9 +161,8 @@ export default function AddCustomer() {
                 value={formData.email}
                 onChange={handleChange}
                 placeholder="Enter email address"
-                className={`w-full rounded-lg border ${
-                  errors.email ? "border-red-500" : "border-stroke"
-                } bg-transparent py-2 px-4 text-sm outline-none focus:border-primary dark:border-form-strokedark dark:bg-form-input dark:focus:border-primary`}
+                className={`w-full rounded-lg border ${errors.email ? "border-red-500" : "border-stroke"
+                  } bg-transparent py-2 px-4 text-sm outline-none focus:border-primary dark:border-form-strokedark dark:bg-form-input dark:focus:border-primary`}
               />
               {errors.email && (
                 <p className="mt-1 text-xs text-red-500">{errors.email}</p>
@@ -184,9 +180,8 @@ export default function AddCustomer() {
                 value={formData.phone}
                 onChange={handleChange}
                 placeholder="Enter phone number"
-                className={`w-full rounded-lg border ${
-                  errors.phone ? "border-red-500" : "border-stroke"
-                } bg-transparent py-2 px-4 text-sm outline-none focus:border-primary dark:border-form-strokedark dark:bg-form-input dark:focus:border-primary`}
+                className={`w-full rounded-lg border ${errors.phone ? "border-red-500" : "border-stroke"
+                  } bg-transparent py-2 px-4 text-sm outline-none focus:border-primary dark:border-form-strokedark dark:bg-form-input dark:focus:border-primary`}
               />
               {errors.phone && (
                 <p className="mt-1 text-xs text-red-500">{errors.phone}</p>
@@ -206,9 +201,8 @@ export default function AddCustomer() {
               value={formData.address}
               onChange={handleChange}
               placeholder="Enter full street address"
-              className={`w-full rounded-lg border ${
-                errors.address ? "border-red-500" : "border-stroke"
-              } bg-transparent py-2 px-4 text-sm outline-none focus:border-primary dark:border-form-strokedark dark:bg-form-input dark:focus:border-primary`}
+              className={`w-full rounded-lg border ${errors.address ? "border-red-500" : "border-stroke"
+                } bg-transparent py-2 px-4 text-sm outline-none focus:border-primary dark:border-form-strokedark dark:bg-form-input dark:focus:border-primary`}
             />
             {errors.address && (
               <p className="mt-1 text-xs text-red-500">{errors.address}</p>
@@ -227,9 +221,8 @@ export default function AddCustomer() {
                 value={formData.city}
                 onChange={handleChange}
                 placeholder="Enter city"
-                className={`w-full rounded-lg border ${
-                  errors.city ? "border-red-500" : "border-stroke"
-                } bg-transparent py-2 px-4 text-sm outline-none focus:border-primary dark:border-form-strokedark dark:bg-form-input dark:focus:border-primary`}
+                className={`w-full rounded-lg border ${errors.city ? "border-red-500" : "border-stroke"
+                  } bg-transparent py-2 px-4 text-sm outline-none focus:border-primary dark:border-form-strokedark dark:bg-form-input dark:focus:border-primary`}
               />
               {errors.city && (
                 <p className="mt-1 text-xs text-red-500">{errors.city}</p>
@@ -246,9 +239,8 @@ export default function AddCustomer() {
                 value={formData.postalCode}
                 onChange={handleChange}
                 placeholder="Enter postal code"
-                className={`w-full rounded-lg border ${
-                  errors.postalCode ? "border-red-500" : "border-stroke"
-                } bg-transparent py-2 px-4 text-sm outline-none focus:border-primary dark:border-form-strokedark dark:bg-form-input dark:focus:border-primary`}
+                className={`w-full rounded-lg border ${errors.postalCode ? "border-red-500" : "border-stroke"
+                  } bg-transparent py-2 px-4 text-sm outline-none focus:border-primary dark:border-form-strokedark dark:bg-form-input dark:focus:border-primary`}
               />
               {errors.postalCode && (
                 <p className="mt-1 text-xs text-red-500">{errors.postalCode}</p>
@@ -266,9 +258,8 @@ export default function AddCustomer() {
                 value={formData.country}
                 onChange={handleChange}
                 placeholder="Enter country"
-                className={`w-full rounded-lg border ${
-                  errors.country ? "border-red-500" : "border-stroke"
-                } bg-transparent py-2 px-4 text-sm outline-none focus:border-primary dark:border-form-strokedark dark:bg-form-input dark:focus:border-primary`}
+                className={`w-full rounded-lg border ${errors.country ? "border-red-500" : "border-stroke"
+                  } bg-transparent py-2 px-4 text-sm outline-none focus:border-primary dark:border-form-strokedark dark:bg-form-input dark:focus:border-primary`}
               />
               {errors.country && (
                 <p className="mt-1 text-xs text-red-500">{errors.country}</p>

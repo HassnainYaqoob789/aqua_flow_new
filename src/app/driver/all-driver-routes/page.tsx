@@ -87,7 +87,7 @@ export default function DriverRouteManagement() {
     }
   };
 
-  const getModeColor = (mode) => {
+  const getModeColor = (mode: string): string => {
     if (mode.includes("Online")) return "bg-green-100 text-green-800";
     if (mode.includes("Hybrid")) return "bg-yellow-100 text-yellow-800";
     if (mode.includes("Offline")) return "bg-red-100 text-red-800";
