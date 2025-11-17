@@ -16,11 +16,43 @@ import {
 
 import Breadcrumb from "@/components/Breadcrumbs/Breadcrumb";
 import DefaultLayout from "@/components/Layouts/DefaultLayout";
-import ChartThree from "@/components/Charts/ChartThree";
-import ChartOne from "@/components/Charts/ChartOne";
-import ChartTwo from "@/components/Charts/ChartTwo";
-import TableFour from "@/components/Tables/TableFour";
-import ProductRevenueChart from "@/components/Tables/ProductRevenueChart";
+import * as NextDynamic from "next/dynamic";
+
+// Dynamic imports - alias to avoid conflict with 'dynamic' export
+const nextDynamic = NextDynamic.default;
+
+// Dynamic imports - let TypeScript infer the type (avoids assignment issues)
+const ChartThree = nextDynamic(
+  () => import("@/components/Charts/ChartThree"),
+  {
+    ssr: false,
+    loading: () => <p className="text-center text-gray-500">Loading chart...</p>
+  }
+);
+
+const ChartOne = nextDynamic(
+  () => import("@/components/Charts/ChartOne"),
+  {
+    ssr: false,
+    loading: () => <p className="text-center text-gray-500">Loading chart...</p>
+  }
+);
+
+const ChartTwo = nextDynamic(
+  () => import("@/components/Charts/ChartTwo"),
+  {
+    ssr: false,
+    loading: () => <p className="text-center text-gray-500">Loading chart...</p>
+  }
+);
+
+const ProductRevenueChart = nextDynamic(
+  () => import("@/components/Tables/ProductRevenueChart"),
+  {
+    ssr: false,
+    loading: () => <p className="text-center text-gray-500">Loading table...</p>
+  }
+);
 
 export default function ReportsAnalytics() {
   const [dateRange, setDateRange] = useState("Last 30 Days");
@@ -211,17 +243,18 @@ export default function ReportsAnalytics() {
           <ChartThree />
         </div>
         <div className="rounded-sm border border-stroke bg-white p-6 shadow-default dark:border-strokedark dark:bg-boxdark">
-          <div className="rounded-sm border border-stroke bg-white p-6 shadow-default dark:border-strokedark dark:bg-boxdark">
-            <div className="mb-4 flex items-center gap-2">
-              <BarChart3 className="h-5 w-5 text-indigo-600" />
-              <h3 className="font-semibold text-black dark:text-white">
-                Product Revenue
-              </h3>
-            </div>
-            <ProductRevenueChart/>
+          <div className="mb-4 flex items-center gap-2">
+            <BarChart3 className="h-5 w-5 text-indigo-600" />
+            <h3 className="font-semibold text-black dark:text-white">
+              Product Revenue
+            </h3>
           </div>
+          <ProductRevenueChart />
         </div>
       </div>
     </DefaultLayout>
   );
 }
+
+// Note: This is the Next.js rendering mode export (not the dynamic import)
+export const dynamic = 'force-dynamic';

@@ -1,8 +1,9 @@
 // src/app/order/add-order/page.tsx
 "use client";
 
-import React, { useState, ChangeEvent } from "react";
+import React, { useState, ChangeEvent, useEffect } from "react";
 import DefaultLayout from "@/components/Layouts/DefaultLayout";
+import Breadcrumb from "@/components/Breadcrumbs/Breadcrumb";
 
 import {
   ArrowLeft,
@@ -44,7 +45,8 @@ interface FormData {
   address: string;
   items: OrderItem[];
   date: string;
-  time: string;
+  startTime: string;
+  endTime: string;
   driver: string;
   amount: string;
   payment: "COD" | "Card" | "Wallet";
@@ -67,19 +69,27 @@ const PRODUCTS = [
 ];
 
 export default function AddOrder() {
+  const today = new Date().toISOString().split('T')[0];
   const [formData, setFormData] = useState<FormData>({
     customer: "",
     address: "",
     items: [],
-    date: "",
-    time: "",
+    date: today,
+    startTime: "",
+    endTime: "",
     driver: "",
-    amount: "",
+    amount: "0.00",
     payment: "COD",
     status: "Pending",
   });
 
   const [errors, setErrors] = useState<Errors>({});
+
+  // Auto-calculate total amount when items change
+  useEffect(() => {
+    const total = formData.items.reduce((sum, item) => sum + (item.quantity * item.price), 0);
+    setFormData(prev => ({ ...prev, amount: total.toFixed(2) }));
+  }, [formData.items]);
 
   // Add product or increment quantity with single click
   const handleProductClick = (product: typeof PRODUCTS[0]) => {
@@ -147,10 +157,8 @@ export default function AddOrder() {
     if (!formData.address.trim()) newErrors.address = "Address is required";
     if (formData.items.length === 0) newErrors.items = "Add at least one product";
     if (!formData.date) newErrors.date = "Date is required";
-    if (!formData.time.trim()) newErrors.time = "Time slot is required";
+    if (!formData.startTime.trim() || !formData.endTime.trim()) newErrors.timeSlot = "Time slot is required";
     if (!formData.driver.trim()) newErrors.driver = "Driver is required";
-    if (!formData.amount || isNaN(Number(formData.amount)) || parseFloat(formData.amount) <= 0)
-      newErrors.amount = "Valid amount is required";
     setErrors(newErrors);
     return Object.keys(newErrors).length === 0;
   };
@@ -163,13 +171,20 @@ export default function AddOrder() {
         customer: "",
         address: "",
         items: [],
-        date: "",
-        time: "",
+        date: today,
+        startTime: "",
+        endTime: "",
         driver: "",
-        amount: "",
+        amount: "0.00",
         payment: "COD",
         status: "Pending",
       });
+    }
+  };
+
+  const handleBackClick = () => {
+    if (typeof window !== "undefined") {
+      window.history.back();
     }
   };
 
@@ -177,19 +192,17 @@ export default function AddOrder() {
 
   return (
     <DefaultLayout>
+      <Breadcrumb
+        pageName="Add New Order"
+        description="Create a new water delivery order"
+      />
 
       <div className="min-h-screen bg-gray-50 p-4 dark:bg-gray-900">
         <div className="mx-auto max-w-6xl">
-          {/* Header */}
-          <div className="mb-6">
-            <h1 className="text-2xl font-bold text-gray-900 dark:text-white">Add New Order</h1>
-            <p className="text-sm text-gray-600 dark:text-gray-400">Create a new water delivery order</p>
-          </div>
-
           {/* Back Button */}
           <div className="mb-6">
             <button
-              onClick={() => window.history.back()}
+              onClick={handleBackClick}
               className="flex items-center gap-2 rounded-lg bg-gray-100 px-4 py-2 text-gray-700 hover:bg-gray-200 dark:bg-gray-800 dark:text-white dark:hover:bg-gray-700"
             >
               <ArrowLeft size={20} /> Back
@@ -247,8 +260,8 @@ export default function AddOrder() {
                         type="button"
                         onClick={() => handleProductClick(p)}
                         className={`relative flex flex-col items-center rounded-lg border p-3 transition-all hover:shadow-md ${quantity > 0
-                            ? "border-blue-500 bg-blue-50 dark:border-blue-400 dark:bg-blue-900/20"
-                            : "border-gray-300 bg-white hover:border-blue-400 dark:border-gray-600 dark:bg-gray-800 dark:hover:border-blue-500"
+                          ? "border-blue-500 bg-blue-50 dark:border-blue-400 dark:bg-blue-900/20"
+                          : "border-gray-300 bg-white hover:border-blue-400 dark:border-gray-600 dark:bg-gray-800 dark:hover:border-blue-500"
                           }`}
                       >
                         {/* Quantity Badge */}
@@ -347,14 +360,14 @@ export default function AddOrder() {
                 </div>
                 <div>
                   <label className="mb-2 flex items-center gap-2 text-sm font-medium text-gray-900 dark:text-white">
-                    <Clock className="h-4 w-4" /> Time Slot *
+                    <Clock className="h-4 w-4" /> Delivery Time Slot *
                   </label>
 
                   <div className="flex gap-2">
                     <input
                       type="time"
                       name="startTime"
-                      // value={formData.startTime}
+                      value={formData.startTime}
                       onChange={handleChange}
                       className={`w-1/2 rounded-lg border ${errors.startTime ? "border-red-500" : "border-gray-300"} bg-white px-4 py-2 text-sm text-gray-900 outline-none focus:border-blue-500 dark:border-gray-600 dark:bg-gray-700 dark:text-white`}
                     />
@@ -362,16 +375,14 @@ export default function AddOrder() {
                     <input
                       type="time"
                       name="endTime"
-                      // value={formData.endTime}
+                      value={formData.endTime}
                       onChange={handleChange}
                       className={`w-1/2 rounded-lg border ${errors.endTime ? "border-red-500" : "border-gray-300"} bg-white px-4 py-2 text-sm text-gray-900 outline-none focus:border-blue-500 dark:border-gray-600 dark:bg-gray-700 dark:text-white`}
                     />
                   </div>
 
-                  {(errors.startTime || errors.endTime) && (
-                    <p className="mt-1 text-xs text-red-500">
-                      {errors.startTime || errors.endTime}
-                    </p>
+                  {errors.timeSlot && (
+                    <p className="mt-1 text-xs text-red-500">{errors.timeSlot}</p>
                   )}
                 </div>
 
@@ -395,19 +406,15 @@ export default function AddOrder() {
                 </div>
                 <div>
                   <label className="mb-2 flex items-center gap-2 text-sm font-medium text-gray-900 dark:text-white">
-                    <DollarSign className="h-4 w-4" /> Amount (PKR) *
+                    <DollarSign className="h-4 w-4" /> Total Amount (PKR)
                   </label>
                   <input
-                    type="number"
+                    type="text"
                     name="amount"
                     value={formData.amount}
-                    onChange={handleChange}
-                    step="0.01"
-                    min="0"
-                    placeholder="0.00"
-                    className={`w-full rounded-lg border ${errors.amount ? "border-red-500" : "border-gray-300"} bg-white px-4 py-2 text-sm text-gray-900 outline-none focus:border-blue-500 dark:border-gray-600 dark:bg-gray-700 dark:text-white`}
+                    readOnly
+                    className="w-full rounded-lg border border-gray-300 bg-gray-100 px-4 py-2 text-sm font-medium text-gray-900 dark:border-gray-600 dark:bg-gray-700 dark:text-white"
                   />
-                  {errors.amount && <p className="mt-1 text-xs text-red-500">{errors.amount}</p>}
                 </div>
               </div>
 
@@ -440,6 +447,5 @@ export default function AddOrder() {
         </div>
       </div>
     </DefaultLayout>
-
   );
 }

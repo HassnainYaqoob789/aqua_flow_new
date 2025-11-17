@@ -8,7 +8,7 @@ function useLocalStorage<T>(
   initialValue: T,
 ): [T, (value: SetValue<T>) => void] {
   // State to store our value
-  // Pass  initial state function to useState so logic is only executed once
+  // Pass initial state function to useState so logic is only executed once
   const [storedValue, setStoredValue] = useState(() => {
     try {
       // Get from local storage by key
@@ -16,11 +16,13 @@ function useLocalStorage<T>(
         // browser code
         const item = window.localStorage.getItem(key);
         // Parse stored json or if none return initialValue
-        return item ? JSON.parse(item) : initialValue;
+        return item ? (JSON.parse(item) as T) : initialValue;
       }
+      // If no window (SSR), return initialValue
+      return initialValue;
     } catch (error) {
       // If error also return initialValue
-      console.log(error);
+      console.warn("useLocalStorage: Failed to parse stored value:", error);
       return initialValue;
     }
   });
@@ -28,19 +30,14 @@ function useLocalStorage<T>(
   // useEffect to update local storage when the state changes
   useEffect(() => {
     try {
-      // Allow value to be a function so we have same API as useState
-      const valueToStore =
-        typeof storedValue === "function"
-          ? storedValue(storedValue)
-          : storedValue;
-      // Save state
+      // Save state (storedValue is already the resolved T, no functional check needed)
       if (typeof window !== "undefined") {
         // browser code
-        window.localStorage.setItem(key, JSON.stringify(valueToStore));
+        window.localStorage.setItem(key, JSON.stringify(storedValue));
       }
     } catch (error) {
       // A more advanced implementation would handle the error case
-      console.log(error);
+      console.warn("useLocalStorage: Failed to store value:", error);
     }
   }, [key, storedValue]);
 

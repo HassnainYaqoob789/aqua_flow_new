@@ -1,4 +1,5 @@
 "use client";
+
 import React, { useState } from "react";
 import {
   ArrowLeft,
@@ -44,7 +45,9 @@ export default function AddExpense() {
   });
   const [errors, setErrors] = useState<Errors>({});
 
-  const handleChange = (e: React.ChangeEvent<HTMLInputElement | HTMLSelectElement | HTMLTextAreaElement>) => {
+  const handleChange = (
+    e: React.ChangeEvent<HTMLInputElement | HTMLSelectElement | HTMLTextAreaElement>
+  ) => {
     const { name, value } = e.target;
     setFormData((prev) => ({ ...prev, [name]: value }));
     if (errors[name]) {
@@ -84,6 +87,12 @@ export default function AddExpense() {
     }
   };
 
+  const handleBackClick = () => {
+    if (typeof window !== "undefined") {
+      window.history.back();
+    }
+  };
+
   return (
     <DefaultLayout>
       <Breadcrumb
@@ -93,7 +102,7 @@ export default function AddExpense() {
       {/* Header with Back Button */}
       <div className="mb-6 flex items-center gap-3">
         <button
-          onClick={() => window.history.back()}
+          onClick={handleBackClick}
           className="flex items-center gap-2 rounded-lg bg-gray-100 px-3 py-2 text-gray-600 hover:bg-gray-200 dark:bg-meta-4 dark:text-white dark:hover:bg-meta-3"
         >
           <ArrowLeft size={20} />
@@ -113,9 +122,8 @@ export default function AddExpense() {
               name="category"
               value={formData.category}
               onChange={handleChange}
-              className={`w-full rounded-lg border ${
-                errors.category ? "border-red-500" : "border-stroke"
-              } bg-transparent px-4 py-2 text-sm outline-none focus:border-primary dark:border-form-strokedark dark:bg-form-input dark:focus:border-primary`}
+              className={`w-full rounded-lg border ${errors.category ? "border-red-500" : "border-stroke"
+                } bg-transparent px-4 py-2 text-sm outline-none focus:border-primary dark:border-form-strokedark dark:bg-form-input dark:focus:border-primary`}
             >
               <option value="">Select category</option>
               <option value="Payroll">Payroll</option>
@@ -144,9 +152,8 @@ export default function AddExpense() {
               value={formData.description}
               onChange={handleChange}
               placeholder="e.g., Electricity Bill - November"
-              className={`w-full rounded-lg border ${
-                errors.description ? "border-red-500" : "border-stroke"
-              } bg-transparent px-4 py-2 text-sm outline-none focus:border-primary dark:border-form-strokedark dark:bg-form-input dark:focus:border-primary`}
+              className={`w-full rounded-lg border ${errors.description ? "border-red-500" : "border-stroke"
+                } bg-transparent px-4 py-2 text-sm outline-none focus:border-primary dark:border-form-strokedark dark:bg-form-input dark:focus:border-primary`}
             />
             {errors.description && (
               <p className="mt-1 text-xs text-red-500">{errors.description}</p>
@@ -167,9 +174,8 @@ export default function AddExpense() {
                 placeholder="0.00"
                 step="0.01"
                 min="0"
-                className={`w-full rounded-lg border ${
-                  errors.amount ? "border-red-500" : "border-stroke"
-                } bg-transparent px-4 py-2 text-sm outline-none focus:border-primary dark:border-form-strokedark dark:bg-form-input dark:focus:border-primary`}
+                className={`w-full rounded-lg border ${errors.amount ? "border-red-500" : "border-stroke"
+                  } bg-transparent px-4 py-2 text-sm outline-none focus:border-primary dark:border-form-strokedark dark:bg-form-input dark:focus:border-primary`}
               />
               {errors.amount && (
                 <p className="mt-1 text-xs text-red-500">{errors.amount}</p>
@@ -185,9 +191,8 @@ export default function AddExpense() {
                 name="date"
                 value={formData.date}
                 onChange={handleChange}
-                className={`w-full rounded-lg border ${
-                  errors.date ? "border-red-500" : "border-stroke"
-                } bg-transparent px-4 py-2 text-sm outline-none focus:border-primary dark:border-form-strokedark dark:bg-form-input dark:focus:border-primary`}
+                className={`w-full rounded-lg border ${errors.date ? "border-red-500" : "border-stroke"
+                  } bg-transparent px-4 py-2 text-sm outline-none focus:border-primary dark:border-form-strokedark dark:bg-form-input dark:focus:border-primary`}
               />
               {errors.date && (
                 <p className="mt-1 text-xs text-red-500">{errors.date}</p>
@@ -204,9 +209,8 @@ export default function AddExpense() {
               name="paymentMethod"
               value={formData.paymentMethod}
               onChange={handleChange}
-              className={`w-full rounded-lg border ${
-                errors.paymentMethod ? "border-red-500" : "border-stroke"
-              } bg-transparent px-4 py-2 text-sm outline-none focus:border-primary dark:border-form-strokedark dark:bg-form-input dark:focus:border-primary`}
+              className={`w-full rounded-lg border ${errors.paymentMethod ? "border-red-500" : "border-stroke"
+                } bg-transparent px-4 py-2 text-sm outline-none focus:border-primary dark:border-form-strokedark dark:bg-form-input dark:focus:border-primary`}
             >
               <option value="">Select method</option>
               <option value="Cash">Cash</option>

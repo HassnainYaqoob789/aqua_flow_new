@@ -86,6 +86,12 @@ export default function AddCustomer() {
     }
   };
 
+  const handleBackClick = () => {
+    if (typeof window !== "undefined") {
+      window.history.back();
+    }
+  };
+
   return (
     <DefaultLayout>
       <Breadcrumb
@@ -96,7 +102,7 @@ export default function AddCustomer() {
       {/* Header with Back Button */}
       <div className="mb-6 flex items-center gap-3">
         <button
-          onClick={() => window.history.back()}
+          onClick={handleBackClick}
           className="flex items-center gap-2 rounded-lg bg-gray-100 px-3 py-2 text-gray-600 hover:bg-gray-200 dark:bg-meta-4 dark:text-white dark:hover:bg-meta-3"
         >
           <ArrowLeft size={20} />
