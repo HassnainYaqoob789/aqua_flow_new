@@ -60,7 +60,7 @@ const options: ApexOptions = {
     fontSize: "14px",
 
     markers: {
-      radius: 99,
+      size: 7,
     },
   },
   fill: {
@@ -68,15 +68,13 @@ const options: ApexOptions = {
   },
 };
 
-interface ChartTwoState {
-  series: {
-    name: string;
-    data: number[];
-  }[];
+interface SeriesData {
+  name: string;
+  data: number[];
 }
 
 const ChartTwo: React.FC = () => {
-  const series = [
+  const series: SeriesData[] = [
     {
       name: "Sales",
       data: [44, 55, 41, 67, 22, 43, 65],
@@ -98,14 +96,14 @@ const ChartTwo: React.FC = () => {
         <div>
           <div className="relative z-20 inline-block">
             <select
-              name="#"
-              id="#"
+              name="period"
+              id="period"
               className="relative z-20 inline-flex appearance-none bg-transparent py-1 pl-3 pr-8 text-sm font-medium outline-none"
             >
-              <option value="" className="dark:bg-boxdark">
+              <option value="this-week" className="dark:bg-boxdark">
                 This Week
               </option>
-              <option value="" className="dark:bg-boxdark">
+              <option value="last-week" className="dark:bg-boxdark">
                 Last Week
               </option>
             </select>
@@ -140,7 +138,7 @@ const ChartTwo: React.FC = () => {
             series={series}
             type="bar"
             height={350}
-            width={"100%"}
+            width="100%"
           />
         </div>
       </div>
